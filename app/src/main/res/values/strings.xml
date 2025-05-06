@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">AppDoacoes</string>
-    <string name="telefone_opcional">Telefone (opcional)</string>
+    <string name="telefone_opcional">Telefone(obrigatório)</string>
     <string name="salvar">Salvar</string>
-    <string name="email_opcional">Email (opcional)</string>
+    <string name="email_opcional">Email(obrigatório)</string>
     <string name="nome_obrigat_rio">Nome (obrigatório)</string>
     <string name="coloque_suas_informa_es_no_campos_abaixo">Coloque suas informações no campos abaixo:</string>
     <string name="cadastro">Cadastro</string>
