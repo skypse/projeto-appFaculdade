@@ -1,5 +1,6 @@
 package com.example.appdoacoes.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -19,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Criação das tabelas
+        // criação das tabelas
 
         String CREATE_DOADORES = "CREATE TABLE " + TABLE_DOADORES + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -53,6 +54,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.d("DatabaseHelperCreated", "Tabelas criadas com sucesso.");
     }
+
+    // inserir doador
+    public long inserirDoador(String nome, String email, String telefone) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nome", nome);
+        values.put("email", email);
+        values.put("telefone", telefone);
+
+        long id = -1;
+        try {
+            id = db.insert(TABLE_DOADORES, null, values);
+            Log.d("DatabaseHelper", "Doador inserido com ID: " + id);
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Erro ao inserir doador: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return id;
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">AppDoacoes</string>
+    <string name="telefone_opcional">Telefone (opcional)</string>
+    <string name="salvar">Salvar</string>
+    <string name="email_opcional">Email (opcional)</string>
+    <string name="nome_obrigat_rio">Nome (obrigatório)</string>
+    <string name="coloque_suas_informa_es_no_campos_abaixo">Coloque suas informações no campos abaixo:</string>
+    <string name="cadastro">Cadastro</string>
+    <string name="conecte_doadores_e_institui_es_de_caridade">Conecte doadores e instituições de caridade.</string>
+    <string name="bem_vindo_ao_appdoa_es">Bem-vindo ao AppDoações!</string>
+    <string name="entrar">Entrar</string>
 </resources>
