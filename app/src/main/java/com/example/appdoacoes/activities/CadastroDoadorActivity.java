@@ -14,7 +14,7 @@ import com.example.appdoacoes.data.DatabaseHelper;
 
 public class CadastroDoadorActivity extends AppCompatActivity {
 
-    private EditText editNome, editEmail, editTelefone;
+    private EditText editNome, editEmail, editTelefone, editSenha; // Adicionei o EditText para senha
     private Button btnCadastrar;
     private DatabaseHelper dbHelper;
     private static final String TAG = "CadastroDoadorActivity";
@@ -24,10 +24,11 @@ public class CadastroDoadorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_doador);
 
-        // Referenciar os campos
+        // referenciar os campos
         editNome = findViewById(R.id.editTextNome);
         editEmail = findViewById(R.id.editTextEmail);
         editTelefone = findViewById(R.id.editTextTelefone);
+        editSenha = findViewById(R.id.editTextSenha);
         btnCadastrar = findViewById(R.id.buttonSalvar);
 
         dbHelper = new DatabaseHelper(this);
@@ -40,8 +41,10 @@ public class CadastroDoadorActivity extends AppCompatActivity {
                 String nome = editNome.getText().toString().trim();
                 String email = editEmail.getText().toString().trim();
                 String telefone = editTelefone.getText().toString().trim();
+                String senha = editSenha.getText().toString().trim();
 
-                Log.d(TAG, "Dados coletados: Nome = " + nome + ", Email = " + email + ", Telefone = " + telefone);
+                Log.d(TAG, "Dados coletados: Nome = " + nome + ", Email = " + email +
+                        ", Telefone = " + telefone + ", Senha = [PROTEGIDO]");
 
                 if (nome.isEmpty()) {
                     Toast.makeText(CadastroDoadorActivity.this, "Digite o nome", Toast.LENGTH_SHORT).show();
@@ -49,7 +52,13 @@ public class CadastroDoadorActivity extends AppCompatActivity {
                     return;
                 }
 
-                long resultado = dbHelper.inserirDoador(nome, email, telefone);
+                if (senha.isEmpty()) {
+                    Toast.makeText(CadastroDoadorActivity.this, "Digite uma senha", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Senha não preenchida");
+                    return;
+                }
+
+                long resultado = dbHelper.inserirDoador(nome, email, telefone, senha);
 
                 if (resultado != -1) {
                     Toast.makeText(CadastroDoadorActivity.this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();

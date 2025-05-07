@@ -39,10 +39,21 @@
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:autofillHints="emailAddress"
         android:hint="@string/email_opcional"
         android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:padding="12dp"
+        android:textColor="#000000" />
+
+    <EditText
+        android:id="@+id/editTextSenha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/digite_sua_senha"
+        android:inputType="textPassword"
         android:textColor="#000000"
-        android:autofillHints="emailAddress"
         android:minHeight="48dp"
         android:padding="12dp"
         android:layout_marginTop="16dp" />
