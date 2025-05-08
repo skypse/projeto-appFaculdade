@@ -26,7 +26,8 @@
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.CadastroDoadorActivity" />
         <activity android:name=".activities.MenuActivity" />
-
+        <activity android:name=".activities.ListaNecessidadesActivity" />
+        <activity android:name=".activities.PublicarNecessidadeActivity" />
     </application>
 
 </manifest>

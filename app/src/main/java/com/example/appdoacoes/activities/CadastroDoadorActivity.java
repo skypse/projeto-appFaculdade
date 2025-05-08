@@ -36,37 +36,44 @@ public class CadastroDoadorActivity extends AppCompatActivity {
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Botão salvar pressionado");
-
                 String nome = editNome.getText().toString().trim();
                 String email = editEmail.getText().toString().trim();
                 String telefone = editTelefone.getText().toString().trim();
                 String senha = editSenha.getText().toString().trim();
 
-                Log.d(TAG, "Dados coletados: Nome = " + nome + ", Email = " + email +
-                        ", Telefone = " + telefone + ", Senha = [PROTEGIDO]");
-
                 if (nome.isEmpty()) {
-                    Toast.makeText(CadastroDoadorActivity.this, "Digite o nome", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Nome não preenchido");
+                    Toast.makeText(CadastroDoadorActivity.this,
+                            "Digite o nome", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (senha.isEmpty()) {
-                    Toast.makeText(CadastroDoadorActivity.this, "Digite uma senha", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Senha não preenchida");
+                if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(CadastroDoadorActivity.this,
+                            "Digite um email válido", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (senha.isEmpty() || senha.length() < 6) {
+                    Toast.makeText(CadastroDoadorActivity.this,
+                            "Senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (dbHelper.verificarEmailExistente(email)) {
+                    Toast.makeText(CadastroDoadorActivity.this,
+                            "Email já cadastrado", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 long resultado = dbHelper.inserirDoador(nome, email, telefone, senha);
 
                 if (resultado != -1) {
-                    Toast.makeText(CadastroDoadorActivity.this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Cadastro inserido com ID: " + resultado);
+                    Toast.makeText(CadastroDoadorActivity.this,
+                            "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(CadastroDoadorActivity.this, "Erro ao cadastrar", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Erro ao cadastrar doador no banco");
+                    Toast.makeText(CadastroDoadorActivity.this,
+                            "Erro ao cadastrar", Toast.LENGTH_SHORT).show();
                 }
             }
         });
