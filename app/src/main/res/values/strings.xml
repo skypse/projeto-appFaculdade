@@ -2,7 +2,7 @@
     <string name="app_name">AppDoacoes</string>
     <string name="telefone_opcional">Digite o seu telefone</string>
     <string name="salvar">Salvar</string>
-    <string name="email_opcional">Digite seu e-mail</string>
+    <string name="email">Digite seu e-mail</string>
     <string name="nome_obrigat_rio">Digite seu nome</string>
     <string name="coloque_suas_informa_es_no_campos_abaixo">Coloque suas informações no campos abaixo:</string>
     <string name="cadastro">Cadastro</string>
@@ -14,4 +14,20 @@
     <string name="cadastrar_se">Cadastrar-se</string>
     <string name="digite_seu_nome">Digite seu nome</string>
     <string name="login">Login</string>
+    <string name="sou_doador">Sou Doador</string>
+    <string name="sou_institui_o">Sou Instituição</string>
+    <string name="bem_vindo_institui_o">Bem-vindo, Instituição!</string>
+    <string name="ver_necessidades">Ver Necessidades</string>
+    <string name="publicar_necessidade">Publicar Necessidade</string>
+    <string name="title_menu_doador">Menu Doador</string>
+    <string name="title_menu_instituicao">Menu Instituição</string>
+    <string name="title_lista_necessidades">Necessidades</string>
+    <string name="title_publicar_necessidade">Publicar Necessidade</string>
+    <string name="nome_do_respons_vel">Nome do Responsável*</string>
+    <string name="email_do_respons_vel">Email do Responsável*</string>
+    <string name="nome_da_institui_o">Nome da Instituição*</string>
+    <string name="descri_o_da_institui_o">Descrição da Instituição</string>
+    <string name="telefone_da_institui_o">Telefone da Instituição*</string>
+    <string name="cadastrar_institui_o">Cadastrar Instituição</string>
+    <string name="senha">Senha*</string>
 </resources>

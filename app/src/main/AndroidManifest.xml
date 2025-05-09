@@ -13,6 +13,7 @@
         android:theme="@style/Theme.AppDoacoes"
         tools:targetApi="31">
 
+        <!-- main (main scren) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -22,12 +23,45 @@
             </intent-filter>
         </activity>
 
-        <!-- activitty -->
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.CadastroDoadorActivity" />
-        <activity android:name=".activities.MenuActivity" />
-        <activity android:name=".activities.ListaNecessidadesActivity" />
-        <activity android:name=".activities.PublicarNecessidadeActivity" />
+        <!-- atividades de autenticação -->
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".activities.CadastroDoadorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".activities.CadastroInstituicaoActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <!-- menus -->
+        <activity
+            android:name=".activities.MenuActivity"
+            android:exported="false"
+            android:label="@string/title_menu_doador"/>
+
+        <activity
+            android:name=".activities.MenuInstituicaoActivity"
+            android:exported="false"
+            android:label="@string/title_menu_instituicao"/>
+
+        <!-- funcionalidades -->
+        <activity
+            android:name=".activities.ListaNecessidadesActivity"
+            android:exported="false"
+            android:label="@string/title_lista_necessidades"/>
+
+        <activity
+            android:name=".activities.PublicarNecessidadeActivity"
+            android:exported="false"
+            android:label="@string/title_publicar_necessidade"
+            android:windowSoftInputMode="adjustResize"/>
+
     </application>
 
 </manifest>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,11 +10,20 @@
         android:id="@+id/textViewBoasVindas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/bem_vindo_ao_appdoa_es"
+        android:text="@string/bem_vindo_institui_o"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:id="@+id/textViewDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:gravity="center"
+        android:text="@string/conecte_doadores_e_institui_es_de_caridade"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/buttonVerNecessidades"

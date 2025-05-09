@@ -9,12 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appdoacoes.R;
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuInstituicaoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_menu_instituicao);
 
         TextView txtBoasVindas = findViewById(R.id.textViewBoasVindas);
         Button btnVerNecessidades = findViewById(R.id.buttonVerNecessidades);
@@ -24,11 +24,11 @@ public class MenuActivity extends AppCompatActivity {
         txtBoasVindas.setText("Bem-vindo, " + nome + "!");
 
         btnVerNecessidades.setOnClickListener(v -> {
-            startActivity(new Intent(MenuActivity.this, ListaNecessidadesActivity.class));
+            startActivity(new Intent(MenuInstituicaoActivity.this, ListaNecessidadesActivity.class));
         });
 
         btnPublicarNecessidade.setOnClickListener(v -> {
-            startActivity(new Intent(MenuActivity.this, PublicarNecessidadeActivity.class));
+            startActivity(new Intent(MenuInstituicaoActivity.this, PublicarNecessidadeActivity.class));
         });
     }
 }

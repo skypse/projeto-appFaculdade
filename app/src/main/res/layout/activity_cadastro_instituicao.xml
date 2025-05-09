@@ -9,17 +9,46 @@
         android:id="@+id/textViewTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cadastro de Instituição"
+        android:text="@string/cadastro"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="24dp" />
 
     <EditText
+        android:id="@+id/editTextNomeDono"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/nome_do_respons_vel"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:padding="12dp" />
+
+    <EditText
+        android:id="@+id/editTextEmailDono"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/email_do_respons_vel"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:padding="12dp" />
+    <EditText
+        android:id="@+id/editTextSenhaInstituicao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/senha"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        android:padding="12dp"/>
+
+    <EditText
         android:id="@+id/editTextNomeInstituicao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nome da Instituição*"
+        android:layout_marginTop="16dp"
+        android:hint="@string/nome_da_institui_o"
         android:inputType="text"
         android:minHeight="48dp"
         android:padding="12dp" />
@@ -27,11 +56,11 @@
     <EditText
         android:id="@+id/editTextDescricao"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_marginTop="16dp"
-        android:hint="Descrição"
+        android:hint="@string/descri_o_da_institui_o"
         android:inputType="textMultiLine"
-        android:minHeight="48dp"
+        android:gravity="top"
         android:padding="12dp" />
 
     <EditText
@@ -39,18 +68,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Telefone"
+        android:hint="@string/telefone_da_institui_o"
         android:inputType="phone"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <EditText
-        android:id="@+id/editTextNecessidades"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Necessidades (separadas por vírgula)"
-        android:inputType="textMultiLine"
         android:minHeight="48dp"
         android:padding="12dp" />
 
@@ -58,6 +77,6 @@
         android:id="@+id/buttonSalvarInstituicao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cadastrar Instituição"
+        android:text="@string/cadastrar_institui_o"
         android:layout_marginTop="24dp" />
 </LinearLayout>

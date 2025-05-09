@@ -9,7 +9,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG_CRUD = "DB_CRUD";  // operações CRUD
 
     private static final String DATABASE_NAME = "AppDoacoes.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 11;
     public static final String TABLE_DOADORES = "doadores";
     public static final String TABLE_INSTITUICOES = "instituicoes";
     public static final String TABLE_DOACOES = "doacoes";
@@ -51,6 +50,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "nome TEXT NOT NULL," +
                     "descricao TEXT," +
                     "telefone TEXT," +
+                    "email TEXT UNIQUE," +
+                    "senha TEXT," +  // Adicione esta linha
                     "necessidades TEXT)");
 
             db.execSQL("CREATE TABLE " + TABLE_DOACOES + " (" +
@@ -69,43 +70,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             throw e;
         }
     }
-    public boolean verificarLoginEmail(String email, String senha) {
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-        try {
-            db = this.getReadableDatabase();
-            cursor = db.rawQuery(
-                    "SELECT id FROM " + TABLE_DOADORES +
-                            " WHERE email = ? AND senha = ?",
-                    new String[]{email, hashSenha(senha)}
-            );
-
-            boolean valido = cursor.getCount() > 0;
-            Log.i(TAG_AUTH, "Login por email " + (valido ? "bem-sucedido" : "inválido"));
-            return valido;
-        } catch (Exception e) {
-            Log.e(TAG_AUTH, "Erro na autenticação por email", e);
-            return false;
-        } finally {
-            if (cursor != null) cursor.close();
-            if (db != null) db.close();
-        }
-    }
-
     public boolean verificarEmailExistente(String email) {
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-        try {
-            db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT id FROM " + TABLE_DOADORES + " WHERE email = ?",
+                new String[]{email}
+        );
+        boolean existe = cursor.getCount() > 0;
+        cursor.close();
+
+        if (!existe) {
             cursor = db.rawQuery(
-                    "SELECT id FROM " + TABLE_DOADORES + " WHERE email = ?",
+                    "SELECT id FROM " + TABLE_INSTITUICOES + " WHERE email = ?",
                     new String[]{email}
             );
-            return cursor.getCount() > 0;
-        } finally {
-            if (cursor != null) cursor.close();
-            if (db != null) db.close();
+            existe = cursor.getCount() > 0;
+            cursor.close();
         }
+
+        return existe;
     }
     private String hashSenha(String senha) {
         try {
@@ -144,28 +127,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (db != null) db.close();
         }
     }
-
-    public boolean verificarLogin(String nome, String senha) {
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-        try {
-            db = this.getReadableDatabase();
-            cursor = db.rawQuery(
-                    "SELECT id FROM " + TABLE_DOADORES + " WHERE nome = ? AND senha = ?",
-                    new String[]{nome, hashSenha(senha)}
-            );
-
-            boolean valido = cursor.getCount() > 0;
-            Log.i(TAG_AUTH, "Login " + (valido ? "bem-sucedido" : "inválido"));
-            return valido;
-        } catch (Exception e) {
-            Log.e(TAG_AUTH, "Erro na autenticação", e);
-            return false;
-        } finally {
-            if (cursor != null) cursor.close();
-            if (db != null) db.close();
-        }
-    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
@@ -178,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.e(TAG_DB, "Falha na atualização", e);
         }
     }
-    public long inserirInstituicao(String nome, String descricao, String telefone, String necessidades) {
+    public long inserirInstituicao(String nome, String descricao, String telefone, String email, String senha) {
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
@@ -186,7 +147,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put("nome", nome);
             values.put("descricao", descricao);
             values.put("telefone", telefone);
-            values.put("necessidades", necessidades);
+            values.put("email", email);
+            values.put("senha", hashSenha(senha));
 
             long id = db.insert(TABLE_INSTITUICOES, null, values);
 
@@ -252,29 +214,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
-    public String obterNomePorEmail(String email) {
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-        try {
-            db = this.getReadableDatabase();
-            cursor = db.rawQuery(
-                    "SELECT nome FROM " + TABLE_DOADORES + " WHERE email = ?",
-                    new String[]{email}
-            );
+    public String obterNomePorEmail(String email, String tipoUsuario) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String tableName = tipoUsuario.equals("doador") ? TABLE_DOADORES : TABLE_INSTITUICOES;
 
-            if (cursor.moveToFirst()) {
-                return cursor.getString(0);
-            }
-            return "";
-        } finally {
-            if (cursor != null) cursor.close();
-            if (db != null) db.close();
+        Cursor cursor = db.rawQuery(
+                "SELECT nome FROM " + tableName + " WHERE email = ?",
+                new String[]{email}
+        );
+
+        if (cursor.moveToFirst()) {
+            String nome = cursor.getString(0);
+            cursor.close();
+            return nome;
         }
+        cursor.close();
+        return "";
     }
     public void verificarDados() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // Verificar instituições
+        // verificar instituições
         Cursor cursorInst = db.rawQuery("SELECT * FROM " + TABLE_INSTITUICOES, null);
         Log.d("DB_VERIFY", "Instituições: " + cursorInst.getCount());
         while (cursorInst.moveToNext()) {
@@ -282,7 +242,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursorInst.close();
 
-        // Verificar doações
+        // verificar doações
         Cursor cursorDoacoes = db.rawQuery("SELECT * FROM " + TABLE_DOACOES, null);
         Log.d("DB_VERIFY", "Doações: " + cursorDoacoes.getCount());
         while (cursorDoacoes.moveToNext()) {
@@ -294,7 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void inicializarDadosTeste() {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // Inserir instituição de teste se não existir
+        // inserir instituição de teste se não existir
         Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_INSTITUICOES + " LIMIT 1", null);
         if (cursor.getCount() == 0) {
             ContentValues values = new ContentValues();
@@ -306,5 +266,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d("DB_TEST", "Instituição teste criada");
         }
         cursor.close();
+    }
+    public String verificarTipoUsuario(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id FROM " + TABLE_DOADORES + " WHERE email = ?", new String[]{email});
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return "doador";
+        }
+        cursor.close();
+
+        cursor = db.rawQuery("SELECT id FROM " + TABLE_INSTITUICOES + " WHERE email = ?", new String[]{email});
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return "instituicao";
+        }
+        cursor.close();
+        return "";
+    }
+    public boolean verificarCredenciais(String email, String senha, String tipoUsuario) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String tableName = tipoUsuario.equals("doador") ? TABLE_DOADORES : TABLE_INSTITUICOES;
+
+        Cursor cursor = db.rawQuery(
+                "SELECT id FROM " + tableName +
+                        " WHERE email = ? AND senha = ?",
+                new String[]{email, hashSenha(senha)}
+        );
+
+        boolean valido = cursor.getCount() > 0;
+        cursor.close();
+        return valido;
     }
 }

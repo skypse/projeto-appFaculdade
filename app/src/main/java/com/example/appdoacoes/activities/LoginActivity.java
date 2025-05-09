@@ -1,4 +1,3 @@
-// LoginActivity.java completo
 package com.example.appdoacoes.activities;
 
 import android.content.Intent;
@@ -18,6 +17,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editEmailLogin, editSenha;
     private Button btnEntrar, btnCadastrar;
     private DatabaseHelper dbHelper;
+    private String tipoUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,38 +30,62 @@ public class LoginActivity extends AppCompatActivity {
         btnCadastrar = findViewById(R.id.buttonCadastrarLogin);
         dbHelper = new DatabaseHelper(this);
 
-        btnEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = editEmailLogin.getText().toString().trim();
-                String senha = editSenha.getText().toString().trim();
+        tipoUsuario = getIntent().getStringExtra("tipoUsuario");
 
-                if (email.isEmpty() || senha.isEmpty()) {
-                    Toast.makeText(LoginActivity.this,
-                            "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        // Atualiza o texto do botão de cadastro conforme o tipo de usuário
+        btnCadastrar.setText(tipoUsuario.equals("doador") ? "Cadastrar Doador" : "Cadastrar Instituição");
 
-                if (dbHelper.verificarLoginEmail(email, senha)) {
-                    // Obter nome do usuário para exibir no menu
-                    String nome = dbHelper.obterNomePorEmail(email);
-                    Toast.makeText(LoginActivity.this,
-                            "Login bem-sucedido!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                    intent.putExtra("nome_doador", nome);
-                    startActivity(intent);
-                    finish();
+        btnEntrar.setOnClickListener(v -> {
+            String email = editEmailLogin.getText().toString().trim();
+            String senha = editSenha.getText().toString().trim();
+
+            // Validação dos campos
+            if (email.isEmpty() || senha.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Verifica o tipo de usuário primeiro
+            String tipo = dbHelper.verificarTipoUsuario(email);
+
+            if (tipo.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Usuário não encontrado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Verifica se o tipo de login corresponde ao tipo de usuário
+            if (!tipo.equals(tipoUsuario)) {
+                Toast.makeText(LoginActivity.this,
+                        tipoUsuario.equals("doador") ?
+                                "Este email é de uma instituição" :
+                                "Este email é de um doador",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Verifica as credenciais
+            if (dbHelper.verificarCredenciais(email, senha, tipo)) {
+                String nome = dbHelper.obterNomePorEmail(email, tipo);
+                Intent intent;
+
+                if (tipo.equals("doador")) {
+                    intent = new Intent(LoginActivity.this, MenuActivity.class);
                 } else {
-                    Toast.makeText(LoginActivity.this,
-                            "Email ou senha inválidos", Toast.LENGTH_SHORT).show();
+                    intent = new Intent(LoginActivity.this, MenuInstituicaoActivity.class);
                 }
+                intent.putExtra("nome_usuario", nome);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(LoginActivity.this, "Email ou senha inválidos", Toast.LENGTH_SHORT).show();
             }
         });
 
-        btnCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnCadastrar.setOnClickListener(v -> {
+            if (tipoUsuario.equals("doador")) {
                 startActivity(new Intent(LoginActivity.this, CadastroDoadorActivity.class));
+            } else {
+                startActivity(new Intent(LoginActivity.this, CadastroInstituicaoActivity.class));
             }
         });
     }

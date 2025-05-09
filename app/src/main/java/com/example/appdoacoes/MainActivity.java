@@ -7,7 +7,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.appdoacoes.activities.CadastroDoadorActivity;
 import com.example.appdoacoes.activities.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,23 +16,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button buttonEntrar = findViewById(R.id.buttonEntrar);
-        Button buttonCadastrar = findViewById(R.id.buttonCadastrar);
+        Button buttonDoador = findViewById(R.id.buttonDoador);
+        Button buttonInstituicao = findViewById(R.id.buttonInstituicao);
 
-        buttonEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+        buttonDoador.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.putExtra("tipoUsuario", "doador");
+            startActivity(intent);
         });
 
-        buttonCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CadastroDoadorActivity.class);
-                startActivity(intent);
-            }
+        buttonInstituicao.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.putExtra("tipoUsuario", "instituicao");
+            startActivity(intent);
         });
     }
 }
