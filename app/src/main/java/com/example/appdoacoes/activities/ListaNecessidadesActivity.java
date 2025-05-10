@@ -4,25 +4,26 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import com.example.appdoacoes.R;
 import com.example.appdoacoes.data.DatabaseHelper;
 
-import java.util.Arrays;
-
 public class ListaNecessidadesActivity extends AppCompatActivity {
 
+    private static final String TAG = "ListaNecessidades";
     private ListView listViewNecessidades;
-    private Button btnAdicionarNecessidade;
     private DatabaseHelper dbHelper;
+    private String userType;
+    private SimpleCursorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,56 +31,41 @@ public class ListaNecessidadesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_necessidades);
 
         listViewNecessidades = findViewById(R.id.listViewNecessidades);
-        btnAdicionarNecessidade = findViewById(R.id.buttonAdicionarNecessidade);
         dbHelper = new DatabaseHelper(this);
-        dbHelper.verificarDados();
 
-        carregarNecessidades();
+        userType = getIntent().getStringExtra("user_type");
+        if (userType == null) {
+            userType = "doador";
+            Log.w(TAG, "Tipo de usuário não definido, usando padrão: doador");
+        }
 
-        // configurando clique nos itens da lista
-        listViewNecessidades.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // implementar ação ao clicar em uma necessidade
-                Toast.makeText(ListaNecessidadesActivity.this,
-                        "Necessidade selecionada: " + id, Toast.LENGTH_SHORT).show();
-
-                // pode abrir uma tela de detalhes ou iniciar processo de doação
-            }
-        });
-
-        btnAdicionarNecessidade.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ListaNecessidadesActivity.this,
-                        PublicarNecessidadeActivity.class));
-            }
-        });
+        setupListView();
     }
 
-    private void carregarNecessidades() {
+    private void setupListView() {
         try {
             Cursor cursor = dbHelper.listarTodasNecessidades();
 
-            if (cursor == null) {
-                Toast.makeText(this, "Erro ao acessar o banco de dados", Toast.LENGTH_SHORT).show();
+            if (cursor == null || cursor.getCount() == 0) {
+                showEmptyState();
                 return;
             }
 
-            if (cursor.getCount() == 0) {
-                Toast.makeText(this, "Nenhuma necessidade cadastrada ainda.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            String[] fromColumns = {
+                    DatabaseHelper.COL_TIPO,
+                    DatabaseHelper.COL_DESCRICAO,
+                    "instituicao",
+                    DatabaseHelper.COL_DATA
+            };
 
-            // Verificar colunas disponíveis (para debug)
-            String[] columnNames = cursor.getColumnNames();
-            Log.d("DB_DEBUG", "Colunas disponíveis: " + Arrays.toString(columnNames));
+            int[] toViews = {
+                    R.id.textViewTipo,
+                    R.id.textViewDescricao,
+                    R.id.textViewInstituicao,
+                    R.id.textViewData
+            };
 
-            // Configurar o adapter
-            String[] fromColumns = {"tipo", "descricao", "instituicao"};
-            int[] toViews = {R.id.textViewTipo, R.id.textViewDescricao, R.id.textViewInstituicao};
-
-            SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+            adapter = new SimpleCursorAdapter(
                     this,
                     R.layout.item_necessidade,
                     cursor,
@@ -89,19 +75,81 @@ public class ListaNecessidadesActivity extends AppCompatActivity {
             );
 
             listViewNecessidades.setAdapter(adapter);
-
-            // log para verificar se tem dados
-            Log.d("DB_DEBUG", "Adapter count: " + adapter.getCount());
+            listViewNecessidades.setOnItemClickListener((parent, view, position, id) -> {
+                if (userType.equals("doador")) {
+                    Intent intent = new Intent(this, RealizarDoacaoActivity.class);
+                    intent.putExtra("necessidade_id", (int)id);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Detalhes da necessidade #" + id, Toast.LENGTH_SHORT).show();
+                }
+            });
 
         } catch (Exception e) {
-            Toast.makeText(this, "Erro ao carregar necessidades: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            Log.e("DB_ERROR", "Erro ao carregar necessidades", e);
+            Log.e(TAG, "Erro ao carregar necessidades", e);
+            showDatabaseError();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_lista_necessidades, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null) {
+                    Cursor filteredCursor = dbHelper.filtrarNecessidades(newText);
+                    adapter.changeCursor(filteredCursor);
+                }
+                return true;
+            }
+        });
+
+        menu.findItem(R.id.action_add).setVisible(userType.equals("instituicao"));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add) {
+            startActivity(new Intent(this, PublicarNecessidadeActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showEmptyState() {
+        Toast.makeText(this, "Nenhuma necessidade cadastrada", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showDatabaseError() {
+        Toast.makeText(this, "Erro ao acessar o banco de dados", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        carregarNecessidades();
+        if (adapter != null) {
+            Cursor newCursor = dbHelper.listarTodasNecessidades();
+            adapter.changeCursor(newCursor);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (adapter != null && adapter.getCursor() != null) {
+            adapter.getCursor().close();
+        }
+        dbHelper.close();
     }
 }

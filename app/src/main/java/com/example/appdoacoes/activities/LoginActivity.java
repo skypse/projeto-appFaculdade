@@ -2,6 +2,7 @@ package com.example.appdoacoes.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ import com.example.appdoacoes.data.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
     private EditText editEmailLogin, editSenha;
     private Button btnEntrar, btnCadastrar;
     private DatabaseHelper dbHelper;
@@ -31,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         tipoUsuario = getIntent().getStringExtra("tipoUsuario");
+        Log.d(TAG, "Tipo de usuário para login: " + tipoUsuario);
 
         // Atualiza o texto do botão de cadastro conforme o tipo de usuário
         btnCadastrar.setText(tipoUsuario.equals("doador") ? "Cadastrar Doador" : "Cadastrar Instituição");
@@ -47,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // Verifica o tipo de usuário primeiro
             String tipo = dbHelper.verificarTipoUsuario(email);
+            Log.d(TAG, "Tipo retornado do banco: " + tipo);
 
             if (tipo.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Usuário não encontrado", Toast.LENGTH_SHORT).show();
@@ -66,22 +70,21 @@ public class LoginActivity extends AppCompatActivity {
             // Verifica as credenciais
             if (dbHelper.verificarCredenciais(email, senha, tipo)) {
                 String nome = dbHelper.obterNomePorEmail(email, tipo);
-                Intent intent;
+                Log.d(TAG, "Login bem-sucedido para: " + nome);
 
-                if (tipo.equals("doador")) {
-                    intent = new Intent(LoginActivity.this, MenuActivity.class);
-                } else {
-                    intent = new Intent(LoginActivity.this, MenuInstituicaoActivity.class);
-                }
+                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                 intent.putExtra("nome_usuario", nome);
+                intent.putExtra("user_type", tipo);
                 startActivity(intent);
                 finish();
             } else {
                 Toast.makeText(LoginActivity.this, "Email ou senha inválidos", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Tentativa de login falhou para: " + email);
             }
         });
 
         btnCadastrar.setOnClickListener(v -> {
+            Log.d(TAG, "Iniciando cadastro para: " + tipoUsuario);
             if (tipoUsuario.equals("doador")) {
                 startActivity(new Intent(LoginActivity.this, CadastroDoadorActivity.class));
             } else {

@@ -29,7 +29,9 @@ android {
 }
 
 dependencies {
-
+    implementation libs.recyclerview
+    implementation libs.swiperefreshlayout
+    implementation libs.material.v160
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity

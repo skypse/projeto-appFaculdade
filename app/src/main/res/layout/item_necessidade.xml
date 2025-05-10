@@ -39,6 +39,14 @@
             android:id="@+id/textViewInstituicao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <!-- Adicione isso dentro do LinearLayout em res/layout/item_necessidade.xml -->
+        <TextView
+            android:id="@+id/textViewData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"
+            android:textColor="#666"/>
     </LinearLayout>
 
     <View

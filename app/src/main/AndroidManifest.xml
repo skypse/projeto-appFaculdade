@@ -13,7 +13,6 @@
         android:theme="@style/Theme.AppDoacoes"
         tools:targetApi="31">
 
-        <!-- main (main scren) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -23,7 +22,6 @@
             </intent-filter>
         </activity>
 
-        <!-- atividades de autenticação -->
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false"
@@ -39,18 +37,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
 
-        <!-- menus -->
         <activity
             android:name=".activities.MenuActivity"
             android:exported="false"
-            android:label="@string/title_menu_doador"/>
+            android:label="@string/title_menu"/>
 
-        <activity
-            android:name=".activities.MenuInstituicaoActivity"
-            android:exported="false"
-            android:label="@string/title_menu_instituicao"/>
-
-        <!-- funcionalidades -->
         <activity
             android:name=".activities.ListaNecessidadesActivity"
             android:exported="false"
@@ -61,6 +52,11 @@
             android:exported="false"
             android:label="@string/title_publicar_necessidade"
             android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".activities.RealizarDoacaoActivity"
+            android:exported="false"
+            android:label="@string/title_realizar_doacao"/>
 
     </application>
 
